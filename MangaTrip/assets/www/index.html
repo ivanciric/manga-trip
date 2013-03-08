@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+<link rel="stylesheet" href="jquerymobile/jquery.mobile-1.3.0.css" />
+<link rel="stylesheet" href="style.css" />
+
+<script type="text/javascript" charset="utf-8"src="cordova-2.5.0.js"></script>
+<script src="jquerymobile/jquery-1.9.1.min.js"></script>
+<script src="jquerymobile/jquery.mobile-1.3.0.min.js"></script>
+
+<script>
+//JSON API URLs
+//url for all pages with custom_field.android
+var url = "http://www.mangatrip.rs/api/Custom/get_custom_posts/?post_type=page&key=android&custom_fields=android,slika,naslov,sezona&order=desc&include=title,custom_fields,url";
+//url for all pages with custom_field.android and sezona
+var urlContent = "http://www.mangatrip.rs/api/Custom/get_custom_posts/?post_type=page&key=android&custom_fields=android,slika,naslov,sezona&order=desc&include=title,content,custom_fields,url";
+//url for a single page
+var urlSingle = "http://www.mangatrip.rs/api/get_page/?id=";
+
+//converts the first letter of each word to uppercase
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+//gest all pages with custom_field android
+function readPages (url) {
+    
+    var URL = url//+"&callback=?";
+    console.log(URL);
+    
+    jQuery.ajax({
+        url: URL,
+        dataType: 'jsonp',
+        beforeSend: function () {
+            jQuery('#travelList>li').remove();
+            $.mobile.showPageLoadingMsg("a", "Učitavanje sadržaja");
+            //$("#start").append('<span id="loadingStart"><img src="loading.gif" />Učitavanje...</span>');
+        },
+        success: function(data) {
+            console.log(data);
+            $.mobile.hidePageLoadingMsg();
+            //$('#loadingStart').remove();
+            
+                for(i=0;i<data.posts.length;i++){
+                    jQuery('#travelList').append("<li><a <a onclick='getDetails("+data.posts[i].id+")' href='#two' data-transition='slide'><img src='"+data.posts[i].custom_fields.slika+"'><h2>"+toTitleCase(data.posts[i].title)+"</h2><small>"+data.posts[i].custom_fields.naslov+"</small></a></li>").listview('refresh');;
+                }
+        }
+    });
+}
+
+//gets a single page based on the id
+function getDetails(id) {
+    
+        var URL = urlSingle+id;
+    
+    jQuery.ajax({
+        url: URL,
+        dataType: 'jsonp',
+        beforeSend: function () {
+               //$.mobile.showPageLoadingMsg();
+            $("#details").html('<div class="detailsLoading"><img src="loading.gif" />Ucitavanje...</div>');
+        },
+        success: function(data) {
+            console.log(data);
+                    //$.mobile.hidePageLoadingMsg(); 
+                    jQuery('#details').html(data.page.content);
+                    $("div#two img").removeAttr("width");
+                    $("div#two img").css("max-width", "300px");
+        }
+    });
+    
+}
+
+//gets all pages with custom_field android and 
+//displays only ones that have custom_field.sezona == based on the input parameter
+function getSeason (season) {
+    
+    var URL = urlContent//+"&callback=?";
+    console.log(URL);
+    
+    jQuery.ajax({
+        url: URL,
+        dataType: 'jsonp',
+        beforeSend: function () {
+            jQuery('#travelList>li').remove();
+            $.mobile.showPageLoadingMsg("a", "Učitavanje sadržaja");
+        },
+        success: function(data) {
+            console.log(data);
+            $.mobile.hidePageLoadingMsg();
+            //$('#loadingStart').remove();
+            if(data.posts.length>1){ 
+                switch(season)
+                    {
+                    case 'prolece':
+                      for(i=0;i<data.posts.length;i++){
+                        if(data.posts[i].custom_fields.sezona == 'prolece'){  
+                            jQuery('#travelList').append("<li><a <a onclick='getDetails("+data.posts[i].id+")' href='#two' data-transition='slide'><img src='"+data.posts[i].custom_fields.slika+"'><h2>"+toTitleCase(data.posts[i].title)+"</h2><small>"+data.posts[i].custom_fields.naslov+"</small></a></li>").listview('refresh');
+                        }
+                      }
+                      break;
+                    case 'leto':
+                      for(i=0;i<data.posts.length;i++){
+                        if(data.posts[i].custom_fields.sezona == 'leto'){  
+                            jQuery('#travelList').append("<li><a <a onclick='getDetails("+data.posts[i].id+")' href='#two' data-transition='slide'><img src='"+data.posts[i].custom_fields.slika+"'><h2>"+toTitleCase(data.posts[i].title)+"</h2><small>"+data.posts[i].custom_fields.naslov+"</small></a></li>").listview('refresh');
+                        }
+                      }
+                      break;
+                    case 'jesen':
+                      for(i=0;i<data.posts.length;i++){
+                        if(data.posts[i].custom_fields.sezona == 'jesen'){  
+                            jQuery('#travelList').append("<li><a <a onclick='getDetails("+data.posts[i].id+")' href='#two' data-transition='slide'><img src='"+data.posts[i].custom_fields.slika+"'><h2>"+toTitleCase(data.posts[i].title)+"</h2><small>"+data.posts[i].custom_fields.naslov+"</small></a></li>").listview('refresh');
+                        }
+                      }
+                      break;
+                    case 'zima':
+                      for(i=0;i<data.posts.length;i++){
+                        if(data.posts[i].custom_fields.sezona == 'zima'){  
+                            jQuery('#travelList').append("<li><a <a onclick='getDetails("+data.posts[i].id+")' href='#two' data-transition='slide'><img src='"+data.posts[i].custom_fields.slika+"'><h2>"+toTitleCase(data.posts[i].title)+"</h2><small>"+data.posts[i].custom_fields.naslov+"</small></a></li>").listview('refresh');
+                        }
+                      }
+                      break;
+                    default:
+                      //code to be executed if n is different from case 1 and 2
+                    }
+                
+            } else {
+                        jQuery('#travelList').remove();
+            }      
+        }
+    });
+}
+
+//on document ready calls the function readPages(url)
+jQuery(document).ready(function() {
+    readPages(url);
+});
+</script>
+
+</head>
+<body>
+        <div data-role="page" id="one">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false" >
+                <p style="text-align: center;" class="mangaTitle">MANGA<span style="font-weight: bold;">TRIP</span></p>                    
+                    <a data-role="button" data-icon="mangaPutovanja" onclick="readPages(url)" id="refreshButton" data-iconpos="notext">Sva putovanja</a>
+                    <a data-role="button" data-icon="mangaInfo" href="#three" id="refreshButton" data-iconpos="notext" data-transition='slide'>O nama</a>
+            </div><!-- /header -->
+            <div data-role="content" id="start">	
+                    <ul data-role="listview" data-theme="a" data-inset="true" id="travelList" data-filter="true" data-filter-placeholder="Filtriraj..." ></ul>		
+            </div><!-- /content -->       
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer">	
+		<a data-role="button" data-icon="mangaProlece" onclick="getSeason('prolece')" id="springButton" data-iconpos="notext">Proleće</a>
+                &nbsp;&nbsp;&nbsp;<a data-role="button" data-icon="mangaLeto" onclick="getSeason('leto')" id="summerButton" data-iconpos="notext">Leto</a>
+                &nbsp;&nbsp;&nbsp;<a data-role="button" data-icon="mangaJesen" onclick="getSeason('jesen')" id="autumnButton" data-iconpos="notext">Jesen</a>
+                &nbsp;&nbsp;&nbsp;<a data-role="button" data-icon="mangaZima" onclick="getSeason('zima')" id="winterButton" data-iconpos="notext">Zima</a>
+            </div><!-- /footer -->
+        </div>
+    <div data-role="page" id="two">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                    <p style="text-align: center;" class="mangaTitle">MANGA<span style="font-weight: bold;">TRIP</span></p>               
+                    <a href="#one" data-rel="back" data-role="button" data-inline="true" data-icon="back" id="backButton" data-iconpos="notext">Nazad</a>
+                    <a data-role="button" data-icon="mangaInfo" href="#three" id="refreshButton" data-iconpos="notext" data-transition='slide'>O nama</a>
+            </div><!-- /header -->
+            <div data-role="content" id="details">	             
+            </div><!-- /content -->         
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer">	
+                <a data-role="button" data-icon="mangaEmail" href="mailto:office@mangatrip.rs" data-iconpos="notext">email</a>
+                &nbsp;&nbsp;&nbsp;<a data-role="button" data-icon="mangaTelefon" href="tel:+381113441016" data-iconpos="notext">poziv</a>         
+            </div><!-- /footer -->
+        </div>
+    
+        <div data-role="page" id="three">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                    <p style="text-align: center;" class="mangaTitle">MANGA<span style="font-weight: bold;">TRIP</span></p>               
+                    <a href="#one" data-rel="back" data-role="button" data-inline="true" data-icon="back" id="backButton" data-iconpos="notext">Nazad</a>
+            </div><!-- /header -->
+            <div data-role="content" id="details">	
+                Mi smo turisticka agencija MangaTrip.
+            </div><!-- /content -->         
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="footer">	
+                <a data-role="button" data-icon="mangaEmail" href="mailto:office@mangatrip.rs" data-iconpos="notext">email</a>
+                &nbsp;&nbsp;&nbsp;<a data-role="button" data-icon="mangaTelefon" href="tel:+381113441016" data-iconpos="notext">poziv</a>         
+            </div><!-- /footer -->
+        </div>
+</body>
+</html>

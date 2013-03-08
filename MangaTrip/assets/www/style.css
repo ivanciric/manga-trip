@@ -1,0 +1,64 @@
+#main{
+    
+}
+
+#box{
+    height: 50px;
+    background-color: #333333;
+    border-top: 1px solid darkgrey;
+    padding-top: 5px;
+}
+
+#image{
+    width:80px;
+    height: 45px;
+    float: left;
+    padding-left: 5px;
+}
+
+#title{
+    height:45px;
+    float: left;
+    color: white;
+    margin-top: 11px;
+    font-family: Arial;
+    font-size: 12px;
+}
+
+#loading{
+    width: 50px;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+#refreshButton, #backButton{
+    float: right;
+}
+
+.detailsLoading{
+    height: 50px;
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 22px;
+}
+
+.footer{
+    height: 40px;
+    text-align: center;
+}
+
+.header{
+    height: 40px;
+}
+
+.mangaTitle{
+    font-family: Myriad Pro;
+}
+
+small{
+    font-size: 10px;
+    font-weight: normal;
+}
